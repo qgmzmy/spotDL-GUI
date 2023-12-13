@@ -2,6 +2,7 @@ import os
 import requests
 import sys
 import darkdetect
+import wget
 import ctypes
 import tkinter
 from tkinter import StringVar
@@ -42,7 +43,8 @@ def main():
 
     # 检测IP
     ip = requests.get('https://4.ipw.cn').text.strip()
-    os.system(f'curl -o %temp%\country_code https://ipapi.co/{ip}/country/')
+    # os.system(f'curl -o %temp%\country_code https://ipapi.co/{ip}/country/')
+    wget.download(f'https://ipapi.co/{ip}/country/', os.getenv("temp") + "\country_code")
     location = open(os.getenv("temp") + "\country_code", encoding="utf-8")
     countryCode = location.read()
     print(countryCode)
@@ -57,14 +59,27 @@ def main():
 
     # 获取URL
 
+    def saveSettings():
+        print(outputstr.get())
+        print(optstr.get())
+
     def settings():
         "设置"
+
         settingsButton.pack_forget()
 
         exitButton.pack(side="top", anchor="ne", padx=10, pady=10)
 
-        outputTitle = ttk.Label(root, text="输出路径")
-        # outputTitle
+        saveSet.pack(side="bottom", anchor="se", padx=10, pady=10)
+
+        outputTitle.pack()
+
+        outputEntry.pack(pady=10)
+
+        optTitle.pack()
+
+        optEntry.pack(pady=10)
+        
 
     def download():
         "下载"
@@ -76,6 +91,13 @@ def main():
             tips.destroy()
 
             exitButton.pack_forget()
+            outputTitle.pack_forget()
+            outputEntry.pack_forget()
+            saveSet.pack_forget()
+            optTitle.pack_forget()
+            optEntry.pack_forget()
+            
+            # 设置按钮
             settingsButton.pack(side="top", anchor="ne", padx=10, pady=10)
         
         else:
@@ -86,7 +108,7 @@ def main():
     urlstr = StringVar()
     url = ttk.Entry(entry, width=56, textvariable=urlstr)
     nxt = ttk.Button(entry, text="→", command=download)
-    entry.grid(pady=45)
+    entry.grid(pady=72)
     url.grid(row=0, column=0, padx=17, pady=0, sticky="nesw")
     nxt.grid(row=0, column=1, pady=0, sticky="nesw")
 
@@ -95,26 +117,29 @@ def main():
     # iconLabel.grid(row=1, column=0, padx=30, pady=30, sticky="nesw")
 
     tips = ttk.Label(root, text="支持Spotify、YouTube Music中的单曲、专辑")
-    tips.grid(row=1, column=0, padx=105, pady=15, sticky="nesw")
+    tips.grid(row=1, column=0, padx=105, sticky="nesw")
 
-    # 下载
+    # 设置
     settingsButton = ttk.Button(root, text="⚙️", command=settings)
     exitButton = ttk.Button(root, text="🏠", command=download)
-    # print(getUrl())
-    # download()
-
-
+    outputTitle = ttk.Label(root, text="输出路径")
+    outputstr = StringVar()
+    outputEntry = ttk.Entry(root, width=40, textvariable=outputstr)
+    saveSet = ttk.Button(root, text="保存", command=saveSettings)
+    optTitle = ttk.Label(root, text="自定义参数")
+    optstr = StringVar()
+    optEntry = ttk.Entry(root, width=40, textvariable=optstr)
 
 
 root = tkinter.Tk()
 
 root.title("spotDL")
-root.geometry("500x200")
+root.geometry("500x270")
 centerWindow(root)
 root.resizable(False, False)
 
 checking = ttk.Label(root, text="正在检测环境…")
-checking.pack(ipady=100)
+checking.pack(ipady=150)
 
 
 
