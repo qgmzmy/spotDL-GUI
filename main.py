@@ -4,6 +4,8 @@ import sys
 import darkdetect
 import wget
 import ctypes
+import subprocess
+import json
 import tkinter
 from tkinter import StringVar
 from tkinter import ttk
@@ -60,8 +62,23 @@ def main():
     # 获取URL
 
     def saveSettings():
+        "保存设置"
+
         print(outputstr.get())
         print(optstr.get())
+
+        settingsOps = {
+            "OutputPath" : outputstr.get(),
+            "Options" : optstr.get()
+        }
+
+        settingsJson = json.dumps(settingsOps)
+        #保存
+        config = os.getenv("userprofile") + "\AppData\Roaming\spotDL"
+        if not os.path.exists(config):
+            os.makedirs(config)
+        f = open(config + "\config.json", "w", encoding="utf-8")
+        f.write(settingsJson)
 
     def settings():
         "设置"
@@ -99,6 +116,10 @@ def main():
             
             # 设置按钮
             settingsButton.pack(side="top", anchor="ne", padx=10, pady=10)
+
+            
+
+            
         
         else:
             messagebox.showwarning(title=None, message='请输入正确的单曲或专辑链接（"open.spotify.com/*" 或 "music.youtube.com/*"）')
